@@ -1,4 +1,4 @@
-## Recipe Chooser and Coupon Finder
+# Recipe Chooser and Coupon Finder
 
 Flask Setup: This script defines a simple Flask server with two routes:
 
@@ -9,7 +9,7 @@ OpenAI API Integration: The query_openai function sends a prompt to the OpenAI A
 Coupon Data: Assumes there is a CSV file named full_coupon_list.csv that contains coupon data which the script reads to check against the ingredients.
 
 
-API Documentation for Recipe and Coupon Selection Service
+### API Documentation for Recipe and Coupon Selection Service
 Base URL
 The base URL for all API endpoints is dependent on the deployment setup. For local testing, it is usually:
 
@@ -114,7 +114,7 @@ Adjust the base URL according to the deployment configuration when moving from d
 
 
 
-## Pantry Itemizer
+# Pantry Itemizer
 
 API Documentation for Frontend Engineers
 Endpoint: POST /analyze-image
