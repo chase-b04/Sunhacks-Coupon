@@ -1,125 +1,51 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-import mysql.connector
-from mysql.connector import Error
-from bcrypt import hashpw, gensalt, checkpw
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_mysqldb import MySQL
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for session management
+auth = Flask(__name__)
+CORS(auth)
 
-# Database connection function for MySQL
-def get_db_connection():
-    try:
-        conn = mysql.connector.connect(
-            host='localhost',  # Change if your MySQL is hosted elsewhere
-            user='root',       # Replace with your MySQL username
-            password='your_mysql_password',  # Replace with your MySQL password
-            database='your_database_name'  # Replace with your MySQL database name
-        )
-        return conn
-    except Error as e:
-        print(f"Error: {e}")
-        return None
+# MySQL configurations
+auth.config['MYSQL_HOST'] = 'localhost'
+auth.config['MYSQL_USER'] = 'your_mysql_user'
+auth.config['MYSQL_PASSWORD'] = 'your_mysql_password'
+auth.config['MYSQL_DB'] = 'your_database_name'
 
-# Register Route
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        latitude = request.form['latitude']
-        longitude = request.form['longitude']
+mysql = MySQL(auth)
 
-        # Hash the password
-        hashed_pw = hashpw(password.encode('utf-8'), gensalt())
+@auth.route('/index', methods=['POST'])
+def signup():
+    data = request.json
+    username = data['email']
+    password = generate_password_hash(data['password'])
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
 
-        # Save to database
-        conn = get_db_connection()
-        if conn is None:
-            flash('Database connection failed.')
-            return redirect(url_for('register'))
-        try:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (username, password, latitude, longitude) VALUES (%s, %s, %s, %s)",
-                           (username, hashed_pw, latitude, longitude))
-            conn.commit()
-        except mysql.connector.IntegrityError:
-            flash('Username already exists. Try a different one.')
-            return redirect(url_for('register'))
-        finally:
-            cursor.close()
-            conn.close()
+    cursor = mysql.connection.cursor()
+    cursor.execute('INSERT INTO users (username, password, latitude, longitude) VALUES (%s, %s, %s, %s)', 
+                   (username, password, latitude, longitude))
+    mysql.connection.commit()
+    cursor.close()
 
-        flash('Registration successful! You can now login.')
-        return redirect(url_for('login'))
+    return jsonify({'message': 'User registered successfully'}), 201
 
-    return render_template('register.html')
-
-
-# Login Route
-@app.route('/login', methods=['GET', 'POST'])
+@auth.route('/index', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    data = request.json
+    username = data['email']
+    password = data['password']
 
-        # Check credentials
-        conn = get_db_connection()
-        if conn is None:
-            flash('Database connection failed.')
-            return redirect(url_for('login'))
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cursor.fetchone()
-        cursor.close()
-        conn.close()
-
-        if user is None or not checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-            flash('Invalid username or password.')
-            return redirect(url_for('login'))
-
-        # Set session if login is successful
-        session['username'] = username
-        flash('Logged in successfully!')
-        return redirect(url_for('dashboard'))
-
-    return render_template('login.html')
-
-
-# Dashboard Route (after login)
-@app.route('/dashboard')
-def dashboard():
-    if 'username' not in session:
-        flash('Please login first.')
-        return redirect(url_for('login'))
-    
-    # Retrieve user's location from database
-    conn = get_db_connection()
-    if conn is None:
-        flash('Database connection failed.')
-        return redirect(url_for('login'))
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT latitude, longitude FROM users WHERE username = %s", (session['username'],))
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT password FROM users WHERE username = %s', (username,))
     user = cursor.fetchone()
     cursor.close()
-    conn.close()
 
-    return f'Welcome, {session["username"]}! Your location is Latitude: {user["latitude"]}, Longitude: {user["longitude"]}.'
-
-# Logout Route
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    flash('You have been logged out.')
-    return redirect(url_for('login'))
-
-@app.route('/')  # This handles the root URL
-def index():
-    return redirect(url_for('login'))
-
-# Handle favicon error
-@app.route('/favicon.ico')
-def favicon():
-    return '', 204
+    if user and check_password_hash(user[0], password):
+        return jsonify({'message': 'Login successful'}), 200
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    auth.run(debug=True)
