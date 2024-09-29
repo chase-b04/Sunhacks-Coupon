@@ -1,4 +1,15 @@
-Pantry Itemizer
+## Recipe Chooser and Coupon Finder
+
+Flask Setup: This script defines a simple Flask server with two routes:
+
+/get_recipes: Returns four randomly selected recipes.
+/select_recipe: Takes a POST request with a recipe ID, finds that recipe, queries the OpenAI API for coupon suggestions based on the recipe's ingredients, and returns those suggestions.
+OpenAI API Integration: The query_openai function sends a prompt to the OpenAI API to get coupon suggestions based on the recipe ingredients. It uses dummy logic for processing the API's response, which should be replaced with your own logic to match the response structure and your coupon data schema.
+
+Coupon Data: Assumes there is a CSV file named full_coupon_list.csv that contains coupon data which the script reads to check against the ingredients.
+
+
+## Pantry Itemizer
 
 API Documentation for Frontend Engineers
 Endpoint: POST /analyze-image
