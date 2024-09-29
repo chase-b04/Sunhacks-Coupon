@@ -1,9 +1,10 @@
 version: "3.7"
+
 services:
   safeway-coupons:
     image: ghcr.io/smkent/safeway-coupons:latest
     environment:
-      CRON_SCHEDULE: "0 2 * * *" # Set your desired cron schedule
+      CRON_SCHEDULE: "0 2 * * *"  # Run at 2:00 AM UTC each day
       SMTPHOST: your.smtp.host
       SAFEWAY_ACCOUNT_USERNAME: your.safeway.account.email@example.com
       SAFEWAY_ACCOUNT_PASSWORD: very_secret
