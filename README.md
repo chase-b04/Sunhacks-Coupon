@@ -32,3 +32,22 @@ That the market for a tool like ThriftyBite exists, as millions of people face f
 Our vision for ThriftyBite includes:
 
 Computer Vision integration to automatically track pantry items and expiry dates via barcode scanning or image recognition. Expanding inventory management features to include expiry tracking and smart restocking suggestions. Direct ordering from retailers within the app and scheduling deliveries for added convenience. Tracking nutritional information for each recipe, helping users maintain a balanced diet while saving money.
+
+
+INSTALLATION
+Clone the repository:
+
+
+git clone https://github.com/chase-b04/Sunhacks-Coupon.git
+
+Install dependencies:
+pip install -r requirements.txt
+
+Set up the MySQL database:
+Create the database as per the schema provided in the backend.
+
+Run the Flask backend:
+python backend/app.py
+
+Run the frontend:
+Open index.html in a browser.
