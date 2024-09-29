@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  safeway-coupons:
+    image: ghcr.io/smkent/safeway-coupons:latest
+    environment:
+      CRON_SCHEDULE: "0 2 * * *" # Set your desired cron schedule
+      SMTPHOST: your.smtp.host
+      SAFEWAY_ACCOUNT_USERNAME: chase200456@yahoo.com
+      SAFEWAY_ACCOUNT_PASSWORD:
+      SAFEWAY_ACCOUNT_MAIL_FROM: chase200456@yahoo.com
+      SAFEWAY_ACCOUNT_MAIL_TO: chase200456@yahoo.com
+    restart: unless-stopped
