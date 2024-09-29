@@ -10,3 +10,9 @@ services:
       SAFEWAY_ACCOUNT_MAIL_FROM: chase200456@yahoo.com
       SAFEWAY_ACCOUNT_MAIL_TO: chase200456@yahoo.com
     restart: unless-stopped
+    
+#IMPORT INFO, HOW TO RUN THIS FILE + API
+#INSTALL DOCKER ONTO COMPUTER/VSCODE
+#Start the Docker Container - docker-compose up -d
+#Check Logs for Debugging - docker-compose logs -f
+# Install Python Package (Optional) - pip install safeway-coupons
