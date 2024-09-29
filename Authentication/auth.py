@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import mysql.connector
 from mysql.connector import Error
 from bcrypt import hashpw, gensalt, checkpw
@@ -21,71 +21,57 @@ def get_db_connection():
         return None
 
 # Register Route
-@app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        latitude = request.form['latitude']
-        longitude = request.form['longitude']
+    data = request.json
+    username = data['username']
+    password = data['password']
+    latitude = data['latitude']
+    longitude = data['longitude']
 
-        # Hash the password
-        hashed_pw = hashpw(password.encode('utf-8'), gensalt())
+    # Hash the password
+    hashed_pw = hashpw(password.encode('utf-8'), gensalt())
 
-        # Save to database
-        conn = get_db_connection()
-        if conn is None:
-            flash('Database connection failed.')
-            return redirect(url_for('register'))
-        try:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (username, password, latitude, longitude) VALUES (%s, %s, %s, %s)",
-                           (username, hashed_pw, latitude, longitude))
-            conn.commit()
-        except mysql.connector.IntegrityError:
-            flash('Username already exists. Try a different one.')
-            return redirect(url_for('register'))
-        finally:
-            cursor.close()
-            conn.close()
-
-        flash('Registration successful! You can now login.')
-        return redirect(url_for('login'))
-
-    return render_template('register.html')
-
-
-# Login Route
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        # Check credentials
-        conn = get_db_connection()
-        if conn is None:
-            flash('Database connection failed.')
-            return redirect(url_for('login'))
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
-        user = cursor.fetchone()
+    # Save to database
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({'message': 'Database connection failed.'}), 500
+    try:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (username, password, latitude, longitude) VALUES (%s, %s, %s, %s)",
+                       (username, hashed_pw, latitude, longitude))
+        conn.commit()
+        return jsonify({'message': 'Registration successful!'}), 200
+    except mysql.connector.IntegrityError:
+        return jsonify({'message': 'Username already exists. Try a different one.'}), 400
+    finally:
         cursor.close()
         conn.close()
 
+# Login Route
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data['username']
+    password = data['password']
+
+    # Check credentials
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({'message': 'Database connection failed.'}), 500
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
         if user is None or not checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
-            flash('Invalid username or password.')
-            return redirect(url_for('login'))
+        return jsonify({'message': 'Invalid username or password.'}), 401
 
-        # Set session if login is successful
-        session['username'] = username
-        flash('Logged in successfully!')
-        return redirect(url_for('dashboard'))
-
-    return render_template('login.html')
+    # Set session if login is successful
+    session['username'] = username
+    return jsonify({'message': 'Logged in successfully!', 'username': username}), 200
 
 
-# Dashboard Route (after login)
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
@@ -103,7 +89,14 @@ def dashboard():
     cursor.close()
     conn.close()
 
-    return f'Welcome, {session["username"]}! Your location is Latitude: {user["latitude"]}, Longitude: {user["longitude"]}.'
+    if user:
+        return jsonify({
+            'message': f'Welcome, {session["username"]}!',
+            #'latitude': user['latitude'],
+            #'longitude': user['longitude']
+        })
+    else:
+        return jsonify({'message': 'User not found.'}), 404
 
 # Logout Route
 @app.route('/logout')
