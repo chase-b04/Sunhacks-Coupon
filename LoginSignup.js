@@ -6,10 +6,51 @@ function LoginSignup() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleGeolocation = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          () => {
+            reject('Geolocation not enabled');
+          }
+        );
+      } else {
+        reject('Browser does not support Geolocation');
+      }
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would authenticate the user.
-    navigate('/dietary-restrictions');
+    try {
+      const location = await handleGeolocation();
+      const response = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        }),
+      });
+
+      if (response.ok) {
+        navigate('/dietary-restrictions');
+      } else {
+        alert('Signup failed');
+      }
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
