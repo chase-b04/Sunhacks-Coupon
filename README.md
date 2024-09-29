@@ -35,6 +35,8 @@ Computer Vision integration to automatically track pantry items and expiry dates
 
 
 INSTALLATION
+
+
 Clone the repository:
 
 
