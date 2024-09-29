@@ -1,26 +1,50 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginSignup from './LoginSignup';
-import DietaryRestrictions from './DietaryRestrictions';
-import RecipePlanning from './RecipePlanning';
-import ShoppingList from './ShoppingList';
-import MealPlanner from './MealPlanner';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import { startCoupons, stopCoupons, getRecipes, selectRecipe, getMealPlan, updateMealPlan, getShoppingList, updateShoppingList } from './Api';
 
-function App() {
-  return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<LoginSignup />} />
-          <Route path="/dietary-restrictions" element={<DietaryRestrictions />} />
-          <Route path="/recipes" element={<RecipePlanning />} />
-          <Route path="/shopping-list" element={<ShoppingList />} />
-          <Route path="/meal-planner" element={<MealPlanner />} />
-          <Route path="/coupons" element={<Coupons />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+// Importing other components
+import Recipes from './Recipes';
+import MealPlanner from './MealPlanner';
+import ShoppingList from './ShoppingList';
+import Coupons from './Coupons';
+
+const App = () => {
+    return (
+        <Router>
+            <div>
+                <nav>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/recipes">Recipes</Link></li>
+                        <li><Link to="/meal-planner">Meal Planner</Link></li>
+                        <li><Link to="/shopping-list">Shopping List</Link></li>
+                        <li><Link to="/coupons">Coupons</Link></li>
+                    </ul>
+                </nav>
+                <Switch>
+                    <Route path="/recipes">
+                        <Recipes />
+                    </Route>
+                    <Route path="/meal-planner">
+                        <MealPlanner />
+                    </Route>
+                    <Route path="/shopping-list">
+                        <ShoppingList />
+                    </Route>
+                    <Route path="/coupons">
+                        <Coupons />
+                    </Route>
+                    <Route path="/">
+                        <Home />
+                    </Route>
+                </Switch>
+            </div>
+        </Router>
+    );
+};
+
+const Home = () => {
+    return <h1>Welcome to the Recipe and Coupon Application</h1>;
+};
 
 export default App;
