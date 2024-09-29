@@ -10,11 +10,3 @@ services:
       SAFEWAY_ACCOUNT_MAIL_FROM: your.email@example.com
       SAFEWAY_ACCOUNT_MAIL_TO: your.email@example.com
     restart: unless-stopped
-    
-#IMPORT INFO, HOW TO RUN THIS FILE + API
-#INSTALL DOCKER ONTO COMPUTER/VSCODE
-#git clone https://github.com/smkent/safeway-coupons.git
-#cd <repository-folder>
-#Start the Docker Container - docker-compose up -d
-#Check Logs for Debugging - docker-compose logs -f
-# Install Python Package (Optional) - pip install safeway-coupons

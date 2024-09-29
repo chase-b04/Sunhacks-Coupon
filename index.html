@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Insecurity App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to the Food Insecurity App</h1>
+        <nav>
+            <ul>
+                <li><a href="#login">Login/Signup</a></li>
+                <li><a href="#dietary-restrictions">Dietary Restrictions</a></li>
+                <li><a href="#recipes">Recipe Planning</a></li>
+                <li><a href="#shopping">Shopping List</a></li>
+                <li><a href="#planner">Meal Planner</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Login and Signup Section -->
+    <section id="login" class="section-container">
+        <h2>Login or Signup</h2>
+        <form class="form-container">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit" class="primary-button">Login</button>
+        </form>
+    </section>
+
+    <!-- Dietary Restrictions Section -->
+    <section id="dietary-restrictions" class="section-container">
+        <h2>Select Dietary Restrictions</h2>
+        <form class="form-container">
+            <label>
+                <input type="checkbox" value="Vegetarian"> Vegetarian
+            </label>
+            <label>
+                <input type="checkbox" value="Vegan"> Vegan
+            </label>
+            <label>
+                <input type="checkbox" value="Gluten-Free"> Gluten-Free
+            </label>
+            <label>
+                <input type="checkbox" value="Lactose Intolerant"> Lactose Intolerant
+            </label>
+            <button type="button" class="primary-button">Save and Continue</button>
+        </form>
+    </section>
+
+    <!-- Recipe Planning Section -->
+    <section id="recipes" class="section-container">
+        <h2>Recipe Planning</h2>
+        <input type="text" id="recipe-search" placeholder="Search Recipes..." class="search-bar">
+        <div class="recipes-list">
+            <div class="recipe-card">
+                <h3>Pasta</h3>
+                <p>Delicious pasta recipe</p>
+                <button class="primary-button">Add to Shopping List</button>
+            </div>
+            <div class="recipe-card">
+                <h3>Salad</h3>
+                <p>Healthy green salad</p>
+                <button class="primary-button">Add to Shopping List</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping List Section -->
+    <section id="shopping" class="section-container">
+        <h2>Shopping List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Compare Stores</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="tomatoes"> Tomatoes
+                    </td>
+                    <td>3</td>
+                    <td><button class="primary-button">Compare Prices</button></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="pasta"> Pasta
+                    </td>
+                    <td>1</td>
+                    <td><button class="primary-button">Compare Prices</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>
